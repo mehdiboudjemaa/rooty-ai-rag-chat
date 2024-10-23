@@ -1,8 +1,21 @@
 const { fontFamily } = require("tailwindcss/defaultTheme")
 
 /** @type {import('tailwindcss').Config} */
+
 module.exports = {
-  content: ["app/**/*.{ts,tsx}", "components/**/*.{ts,tsx}"],
+  darkMode: 'selector',
+  content: [
+    "app/**/*.{ts,tsx}",
+    "components/**/*.{ts,tsx}",
+    "app/admin/*.{ts,tsx}",
+    'node_modules/preline/dist/*.js',
+    "./app/**/*.{js,ts,jsx,tsx}",
+    "./pages/**/*.{js,ts,jsx,tsx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./app/(preview)/**/*.{js,ts,jsx,tsx,mdx}",
+    "./app/admin/**/*.{js,ts,jsx,tsx,mdx}",
+    'node_modules/preline/dist/*.js',
+  ],
   theme: {
     container: {
       center: true,
@@ -71,5 +84,10 @@ module.exports = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"),
+    require('@tailwindcss/forms'),
+    require('preline/plugin'),
+  ],
+  
 }
