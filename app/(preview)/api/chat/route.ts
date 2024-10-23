@@ -13,36 +13,36 @@ export async function POST(req: Request) {
   const result = await streamText({
     model: openai("gpt-4o"),
     messages: convertToCoreMessages(messages),
-    system: `You are a helpful assistant acting as the users' second brain.
-    Use tools on every request.
-    Be sure to getInformation from your knowledge base before answering any questions.
-    If the user presents infromation about themselves, use the addResource tool to store it.
-    If a response requires multiple tools, call one tool after another without responding to the user.
-    If a response requires information from an additional tool to generate a response, call the appropriate tools in order before responding to the user.
-    ONLY respond to questions using information from tool calls.
-    if no relevant information is found in the tool calls, respond, "Sorry, I don't know."
-    Be sure to adhere to any instructions in tool calls ie. if they say to responsd like "...", do exactly that.
-    If the relevant information is not a direct match to the users prompt, you can be creative in deducing the answer.
-    Keep responses short and concise. Answer in a single sentence where possible.
-    If you are unsure, use the getInformation tool and you can use common sense to reason based on the information you do have.
-    Use your abilities as a reasoning machine to answer questions based on the information you do have.
-`,
+    system: `Vous êtes un assistant IA francophone agissant comme le second cerveau de l'utilisateur.
+    Utilisez des outils pour chaque requête.
+    Assurez-vous de récupérer les informations de votre base de connaissances avant de répondre à toute question.
+    Si l'utilisateur présente des informations sur lui-même, utilisez l'outil addResource pour les stocker.
+    Si une réponse nécessite plusieurs outils, appelez-les l'un après l'autre sans répondre à l'utilisateur.
+    Si une réponse nécessite des informations d'un outil supplémentaire, appelez les outils appropriés dans l'ordre avant de répondre à l'utilisateur.
+    Répondez UNIQUEMENT aux questions en utilisant les informations des appels d'outils.
+    Si aucune information pertinente n'est trouvée dans les appels d'outils, répondez "Désolé, je ne sais pas."
+    Assurez-vous de respecter toutes les instructions dans les appels d'outils, par exemple, s'ils disent de répondre comme "...", faites exactement cela.
+    Si l'information pertinente ne correspond pas exactement à la requête de l'utilisateur, vous pouvez faire preuve de créativité pour déduire la réponse.
+    Gardez les réponses courtes et concises. Répondez en une seule phrase si possible.
+    Si vous n'êtes pas sûr, utilisez l'outil getInformation et vous pouvez utiliser le bon sens pour raisonner en fonction des informations dont vous disposez.
+    Utilisez vos capacités de raisonnement pour répondre aux questions en fonction des informations dont vous disposez.
+    Répondez toujours en français.`,
     tools: {
       addResource: tool({
-        description: `add a resource to your knowledge base.
-          If the user provides a random piece of knowledge unprompted, use this tool without asking for confirmation.`,
+        description: `Ajouter une ressource à votre base de connaissances.
+          Si l'utilisateur fournit un élément de connaissance aléatoire sans être sollicité, utilisez cet outil sans demander de confirmation.`,
         parameters: z.object({
           content: z
             .string()
-            .describe("the content or resource to add to the knowledge base"),
+            .describe("le contenu ou la ressource à ajouter à la base de connaissances"),
         }),
         execute: async ({ content }) => createResource({ content }),
       }),
       getInformation: tool({
-        description: `get information from your knowledge base to answer questions.`,
+        description: `Obtenir des informations de votre base de connaissances pour répondre aux questions.`,
         parameters: z.object({
-          question: z.string().describe("the users question"),
-          similarQuestions: z.array(z.string()).describe("keywords to search"),
+          question: z.string().describe("la question de l'utilisateur"),
+          similarQuestions: z.array(z.string()).describe("mots-clés à rechercher"),
         }),
         execute: async ({ similarQuestions }) => {
           const results = await Promise.all(
@@ -50,7 +50,7 @@ export async function POST(req: Request) {
               async (question) => await findRelevantContent(question),
             ),
           );
-          // Flatten the array of arrays and remove duplicates based on 'name'
+          // Aplatir le tableau de tableaux et supprimer les doublons basés sur 'name'
           const uniqueResults = Array.from(
             new Map(results.flat().map((item) => [item?.name, item])).values(),
           );
@@ -58,28 +58,28 @@ export async function POST(req: Request) {
         },
       }),
       understandQuery: tool({
-        description: `understand the users query. use this tool on every prompt.`,
+        description: `Comprendre la requête de l'utilisateur. Utilisez cet outil pour chaque prompt.`,
         parameters: z.object({
-          query: z.string().describe("the users query"),
+          query: z.string().describe("la requête de l'utilisateur"),
           toolsToCallInOrder: z
             .array(z.string())
             .describe(
-              "these are the tools you need to call in the order necessary to respond to the users query",
+              "ce sont les outils que vous devez appeler dans l'ordre nécessaire pour répondre à la requête de l'utilisateur",
             ),
         }),
         execute: async ({ query }) => {
           const { object } = await generateObject({
             model: openai("gpt-4o"),
             system:
-              "You are a query understanding assistant. Analyze the user query and generate similar questions.",
+              "Vous êtes un assistant de compréhension de requêtes. Analysez la requête de l'utilisateur et générez des questions similaires.",
             schema: z.object({
               questions: z
                 .array(z.string())
                 .max(3)
-                .describe("similar questions to the user's query. be concise."),
+                .describe("questions similaires à la requête de l'utilisateur. Soyez concis."),
             }),
-            prompt: `Analyze this query: "${query}". Provide the following:
-                    3 similar questions that could help answer the user's query`,
+            prompt: `Analysez cette requête : "${query}". Fournissez les éléments suivants :
+                    3 questions similaires qui pourraient aider à répondre à la requête de l'utilisateur`,
           });
           return object.questions;
         },

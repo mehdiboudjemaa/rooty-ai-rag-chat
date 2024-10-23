@@ -40,7 +40,7 @@ export default function AdminForm() {
           value={context}
           onChange={(e) => setContext(e.target.value)}
           placeholder="Enter context here..."
-          className="bg-neutral-100 text-base w-full text-neutral-700 dark:bg-neutral-700 dark:placeholder:text-neutral-400 dark:text-neutral-300"
+          className="bg-white border-gray-400 text-base w-full text-neutral-700 hover:border-indigo-500 dark:bg-neutral-700 dark:placeholder:text-neutral-400 dark:text-neutral-300"
         />
       </div>
       <div>
@@ -52,7 +52,7 @@ export default function AdminForm() {
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder="Enter knowledge content here..."
-          className="bg-neutral-100 text-base w-full text-neutral-700 dark:bg-neutral-700 dark:placeholder:text-neutral-400 dark:text-neutral-300 min-h-[100px] rounded-md"
+          className="bg-white border-gray-400 text-base w-full text-neutral-700 hover:border-indigo-500 text-base w-full text-neutral-700 dark:bg-neutral-700 dark:placeholder:text-neutral-400 dark:text-neutral-300 min-h-[100px] rounded-md"
           rows={6}
         />
       </div>
