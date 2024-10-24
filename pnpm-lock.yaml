@@ -42,7 +42,7 @@ importers:
         specifier: ^2.1.1
         version: 2.1.1
       drizzle-orm:
-        specifier: ^0.31.2
+        specifier: ^0.31.4
         version: 0.31.4(@opentelemetry/api@1.9.0)(@types/react@18.3.4)(pg@8.12.0)(postgres@3.4.4)(react@18.3.1)
       drizzle-zod:
         specifier: ^0.5.1
